@@ -3,10 +3,10 @@ import { defineComponent } from "vue";
 import { format } from "date-fns";
 
 export default defineComponent({
-    name:"AddBookView",
+    name: "AddBookView",
     data() {
         return {
-            title:"",
+            title: "",
             author: "",
             publishedDate: "",
             publisher: "",
@@ -26,6 +26,18 @@ export default defineComponent({
             return format(new Date(date), "dd MMMM yyyy");
         },
         async addBook() {
+            if (this.initialQty < this.qty) {
+                this.error = true;
+                this.errorMsg = "Initial Quantity cannot be less than Quantity";
+                return;
+            }
+
+            if (this.initialQty < 0 || this.qty < 0) {
+                this.error = true;
+                this.errorMsg = "Initial Quantity or Quantity cannot be less than 0";
+                return;
+            }
+
             const newBook = {
                 title: this.title,
                 author: this.author,
@@ -41,6 +53,7 @@ export default defineComponent({
                 initialQty: this.initialQty,
                 qty: this.qty,
             };
+
             const response = await fetch("http://localhost:3000/book", {
                 method: "POST",
                 headers: {
@@ -55,68 +68,69 @@ export default defineComponent({
             } else {
                 this.error = true;
                 const data = await response.json();
-                if (data.message.include("duplicate")) {
+                if (data.message.includes("duplicate")) {
                     this.errorMsg = "Book already exists!";
+                } else {
+                    this.errorMsg = "Failed to add your book :(, error: " + data.message;
                 }
-                this.errorMsg = "Failed to add your book :(, error: " + data.message;
             }
         },
-    }
-})
+    },
+});
 </script>
 
 <template>
     <main class="mt-12 mx-8 pb-20">
-        <h1 class="text-3xl font-bold mb-4 text-center">Add Book</h1>
-        <form @submit.prevent="addBook" class="max-w-2xl mx-auto bg-blue-darker p-8 rounded-md shadow-md">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="title" class="block text-sm font-medium text-white">Title</label>
-                    <input v-model="title" type="text" id="title" name="title" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="author" class="block text-sm font-medium text-white">Author</label>
-                    <input v-model="author" type="text" id="author" name="author" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="publishedDate" class="block text-sm font-medium text-white">Published Date</label>
-                    <input v-model="publishedDate" type="date" id="publishedDate" name="publishedDate" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="publisher" class="block text-sm font-medium text-white">Publisher</label>
-                    <input v-model="publisher" type="text" id="publisher" name="publisher" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="description" class="block text-sm font-medium text-white">Description</label>
-                    <textarea v-model="description" id="description" name="description" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required></textarea>
-                </div>
-                <div>
-                    <label for="coverImage" class="block text-sm font-medium text-white">Cover Image</label>
-                    <input v-model="coverImage" type="text" id="coverImage" name="coverImage" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="ratingAverage" class="block text-sm font-medium text-white">Rating Average</label>
-                    <input v-model="ratingAverage" type="number" step="0.1" id="ratingAverage" name="ratingAverage" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="ratingCount" class="block text-sm font-medium text-white">Rating Count</label>
-                    <input v-model="ratingCount" type="number" id="ratingCount" name="ratingCount" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="tags" class="block text-sm font-medium text-white">Tags (comma separated)</label>
-                    <input v-model="tags" type="text" id="tags" name="tags" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="initialQty" class="block text-sm font-medium text-white">Initial Quantity</label>
-                    <input v-model="initialQty" type="number" id="initialQty" name="initialQty" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <div>
-                    <label for="qty" class="block text-sm font-medium text-white">Quantity</label>
-                    <input v-model="qty" type="number" id="qty" name="qty" class="mt-1 p-2 border border-gray-300 rounded-md w-full text-stone-500" required>
-                </div>
-                <h4 v-if="error" class="col-span-2 text-red-500">{{ errorMsg }}</h4>
-                <button type="submit" class="col-span-2 bg-blue-500 text-white p-2 rounded-md">Add Book</button>
+        <h1 class="text-4xl font-extrabold mb-8 text-center text-blue-700">Add a New Book</h1>
+        <form @submit.prevent="addBook" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4">
+            <div class="flex flex-col">
+                <label for="title" class="text-lg font-semibold text-gray-700">Title</label>
+                <input v-model="title" type="text" id="title" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
             </div>
+            <div class="flex flex-col">
+                <label for="author" class="text-lg font-semibold text-gray-700">Author</label>
+                <input v-model="author" type="text" id="author" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="publishedDate" class="text-lg font-semibold text-gray-700">Published Date</label>
+                <input v-model="publishedDate" type="date" id="publishedDate" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="publisher" class="text-lg font-semibold text-gray-700">Publisher</label>
+                <input v-model="publisher" type="text" id="publisher" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="description" class="text-lg font-semibold text-gray-700">Description</label>
+                <textarea v-model="description" id="description" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" rows="4" required></textarea>
+            </div>
+            <div class="flex flex-col">
+                <label for="coverImage" class="text-lg font-semibold text-gray-700">Cover Image</label>
+                <input v-model="coverImage" type="text" id="coverImage" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="ratingAverage" class="text-lg font-semibold text-gray-700">Rating Average</label>
+                <input v-model="ratingAverage" type="number" step="0.1" id="ratingAverage" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="ratingCount" class="text-lg font-semibold text-gray-700">Rating Count</label>
+                <input v-model="ratingCount" type="number" id="ratingCount" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="tags" class="text-lg font-semibold text-gray-700">Tags (comma separated)</label>
+                <input v-model="tags" type="text" id="tags" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="initialQty" class="text-lg font-semibold text-gray-700">Initial Quantity</label>
+                <input v-model="initialQty" type="number" id="initialQty" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="qty" class="text-lg font-semibold text-gray-700">Quantity</label>
+                <input v-model="qty" type="number" id="qty" class="mt-2 p-3 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div v-if="error" class="mt-4 bg-red-100 text-red-500 p-3 rounded-lg">
+                {{ errorMsg }}
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Add Book</button>
         </form>
     </main>
 </template>
