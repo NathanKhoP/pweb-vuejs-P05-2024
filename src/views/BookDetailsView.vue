@@ -97,6 +97,12 @@ export default defineComponent({
                 >
                 Remove Book
                 </button>
+                <RouterLink
+        :to="`/book/modify/${bookDetail._id}`"
+        class="ml-4 px-4 text-white py-2 w-1/2 bg-blue-400 font-semibold rounded-xl mt-8 inline-block"
+      >
+        Edit Book
+      </RouterLink>
             </div>
         </div>
         <div v-else class="mt-8">

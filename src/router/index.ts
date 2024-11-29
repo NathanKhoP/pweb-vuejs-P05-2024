@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from "../views/HomeView.vue";
 import AddBookView from "@/views/AddBookView.vue";
 import BookDetailsView from "@/views/BookDetailsView.vue";
+import ModifyBookView from "@/views/ModifyBookView.vue"; // Import halaman ModifyBookView
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: "/detail/:id",
       name: "get-book-details",
       component: BookDetailsView,
+    },
+    {
+      path: "/book/modify/:id", // Tambahkan rute untuk halaman modify
+      name: "modify-book",
+      component: ModifyBookView,
     },
     {
       path: "/:pathMatch(.*)*",
