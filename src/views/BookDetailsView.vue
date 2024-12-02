@@ -99,7 +99,7 @@ export default defineComponent({
                 </button>
                 <RouterLink
         :to="`/book/modify/${bookDetail._id}`"
-        class="ml-4 px-4 text-white py-2 w-1/2 bg-blue-400 font-semibold rounded-xl mt-8 inline-block"
+        class="ml-4 px-4 text-white py-2 w-1/2 bg-blue-400 font-semibold rounded-xl mt-8 inline-block text-center"
       >
         Edit Book
       </RouterLink>

@@ -10,6 +10,7 @@ interface BookObject {
   initialQty: number;
   qty: number;
   publisher: string;
+  coverImage: string;
 }
 
 export default {
@@ -39,7 +40,7 @@ export default {
 
 <template>
   <main class="mt-10 mx-8 pb-24">
-    <h1 class="text-4xl font-extrabold mb-8 text-center text-blue-700">Welcome To Our Book Catalogue</h1>
+    <h1 class="text-4xl font-extrabold mb-8 text-center text-stone-300">Welcome To Our Book Catalogue</h1>
     <div class="flex flex-wrap justify-center gap-4 mt-10">
       <BookCard
         v-if="booksData.length"
